@@ -6,6 +6,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
 import com.yjin.mvc.domain.Board;
+import com.yjin.mvc.parameter.BoardParameter;
 import com.yjin.mvc.repository.BoardRepository;
 
 /**
@@ -39,12 +40,12 @@ public class BoardService {
 	 * 등록/수정 처리
 	 * @param board
 	 */
-	public void save(Board param) {
-		Board board = repository.get(param.getBoardSeq());
+	public void save(BoardParameter boardParameter) {
+		Board board = repository.get(boardParameter.getBoardSeq());
 		if(board == null) {
-			repository.save(param);
+			repository.save(boardParameter);
 		} else {
-			repository.update(param);
+			repository.update(boardParameter);
 		}
 	}
 	

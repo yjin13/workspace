@@ -5,6 +5,7 @@ import java.util.List;
 import org.springframework.stereotype.Repository;
 
 import com.yjin.mvc.domain.Board;
+import com.yjin.mvc.parameter.BoardParameter;
 
 /**
  * 게시판 Repository
@@ -17,9 +18,9 @@ public interface BoardRepository {
 	
 	Board get(int boardSeq);
 	
-	void save(Board board);
+	void save(BoardParameter boardParameter);
 	
-	void update(Board board);
+	void update(BoardParameter boardParameter);
 	
 	void delete(int boardSeq);
 	
