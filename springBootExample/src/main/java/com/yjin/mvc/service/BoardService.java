@@ -7,6 +7,7 @@ import java.util.Map;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
+import com.yjin.framework.data.domain.PageRequestParameter;
 import com.yjin.mvc.domain.Board;
 import com.yjin.mvc.parameter.BoardParameter;
 import com.yjin.mvc.parameter.BoardSearchParameter;
@@ -26,8 +27,8 @@ public class BoardService {
 	 * 목록 리턴
 	 * @return
 	 */
-	public List<Board> getList(BoardSearchParameter parameter) {
-		return repository.getList(parameter);
+	public List<Board> getList(PageRequestParameter<BoardSearchParameter> pageRequestParameter) {
+		return repository.getList(pageRequestParameter);
 	}
 	
 	/**

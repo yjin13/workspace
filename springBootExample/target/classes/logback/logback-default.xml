@@ -55,7 +55,7 @@
 		jdbc.resulttable : SQL의 조회 결과를 테이블로 보여줍니다.
 		jdbc.connection : Connection의 연결과 종료에 관련된 로그를 보여줍니다. 메모리 누수에 도움됨!
 	 -->
-	<logger name="jdbc.connection" level="INFO" />
+	<logger name="jdbc.connection" level="ERROR" />
 	<logger name="jdbc.sqlonly" level="DEBUG" />
 	<logger name="jdbc.sqltiming" level="ERROR" />
 	<logger name="jdbc.resultset" level="OFF" />

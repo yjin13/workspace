@@ -11,6 +11,7 @@ public class BoardParameter {
 	private BoardType boardType;
 	private String title;
 	private String contents;
+	private boolean delYn;
 	
 	public BoardParameter() {}
 	
@@ -19,9 +20,10 @@ public class BoardParameter {
 		this.contents = contents;
 	}
 	
-	public BoardParameter(BoardType boardType, String title, String contents) {
+	public BoardParameter(BoardType boardType, String title, String contents, boolean delYn) {
 		this.boardType = boardType;
 		this.title = title;
 		this.contents = contents;
+		this.delYn = delYn;
 	}
 }

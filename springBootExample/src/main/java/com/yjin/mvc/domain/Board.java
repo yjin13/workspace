@@ -4,6 +4,10 @@ import java.util.Date;
 
 import lombok.Data;
 
+/**
+ * 게시물
+ * @author yjin
+ */
 @Data
 public class Board {
 
@@ -12,5 +16,6 @@ public class Board {
 	private String title;
 	private String contents;
 	private Date regDate;
+	private boolean delYn;
 	
 }

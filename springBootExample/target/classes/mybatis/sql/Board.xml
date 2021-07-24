@@ -3,30 +3,36 @@
 
 <mapper namespace="com.yjin.mvc.repository.BoardRepository">
 
+	<resultMap type="com.yjin.mvc.domain.Board" id="getListResultMap">
+		<result column="DEL_YN" property="delYn" typeHandler="com.yjin.configuration.mybatis.typehandler.StringValueBooleanTypeHandler"/>
+	</resultMap>
+
 	<!-- @를 사용하면 Java static method 접근 가능 (@패키지+클래스명@메소드명) -->
-	<select id="getList" parameterType="com.yjin.mvc.parameter.BoardSearchParameter" resultType="com.yjin.mvc.domain.Board">
+	<select id="getList" parameterType="com.yjin.framework.data.domain.PageRequestParameter" resultMap="getListResultMap">
 	SELECT
 		B.BOARD_SEQ,
 		B.BOARD_TYPE,
 		B.TITLE,
 		B.CONTENTS,
-		B.REG_DATE
+		B.REG_DATE,
+		B.DEL_YN
 	FROM T_BOARD B
 	<where>
 		<!-- 제목 키워드 검색 -->
-		<if test="@org.apache.commons.lang3.StringUtils@isNotEmpty(keyword)">
-		AND B.TITLE LIKE CONCAT('%', #{keyword}, '%')
+		<if test="@org.apache.commons.lang3.StringUtils@isNotEmpty(parameter.keyword)">
+		AND B.TITLE LIKE CONCAT('%', #{parameter.keyword}, '%')
 		</if>
 		<!-- 게시판 종류 검색 -->
-		<if test="@org.apache.commons.lang3.ObjectUtils@isNotEmpty(boardTypes)">
+		<if test="@org.apache.commons.lang3.ObjectUtils@isNotEmpty(parameter.boardTypes)">
 		AND B.BOARD_TYPE IN (
-			<foreach collection="boardTypes" item="value" separator=",">
+			<foreach collection="parameter.boardTypes" item="value" separator=",">
 			#{value}
 			</foreach>
 		)
 		</if>
 	</where>
 	ORDER BY B.REG_DATE DESC
+	LIMIT #{pageRequest.limit}, #{pageRequest.offset}
 	</select>
 	
 	<select id="get" parameterType="int" resultType="com.yjin.mvc.domain.Board">
@@ -46,14 +52,16 @@
 		BOARD_TYPE,
 		TITLE,
 		CONTENTS,
-		REG_DATE
+		REG_DATE, 
+		DEL_YN
 	)
 	VALUES
 	(
 		#{boardType.code},
 		#{title},
 		#{contents},
-		NOW()
+		NOW(),
+		#{delYn, typeHandler=com.yjin.configuration.mybatis.typehandler.StringValueBooleanTypeHandler}
 	)
 	</insert>
 	

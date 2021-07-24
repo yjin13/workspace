@@ -1,18 +1,23 @@
 package com.yjin.configuration;
 
+import java.util.List;
 import java.util.Locale;
 
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.context.support.ReloadableResourceBundleMessageSource;
 import org.springframework.http.MediaType;
+import org.springframework.web.method.support.HandlerMethodArgumentResolver;
 import org.springframework.web.servlet.config.annotation.InterceptorRegistry;
+import org.springframework.web.servlet.config.annotation.ResourceHandlerRegistry;
 import org.springframework.web.servlet.config.annotation.WebMvcConfigurer;
 import org.springframework.web.servlet.view.json.MappingJackson2JsonView;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.fasterxml.jackson.databind.module.SimpleModule;
 import com.yjin.configuration.servlet.handler.BaseHandlerInterceptor;
+import com.yjin.framework.data.web.MySQLPageRequestHandlerMethodArgumentResolver;
 import com.yjin.mvc.domain.BaseCodeLabelEnum;
 
 /**
@@ -20,6 +25,9 @@ import com.yjin.mvc.domain.BaseCodeLabelEnum;
  */
 @Configuration
 public class WebConfiguration implements WebMvcConfigurer {
+
+	@Autowired
+	private GlobalConfig config;
 	
 	/**
 	 * 다국어 설정
@@ -72,6 +80,41 @@ public class WebConfiguration implements WebMvcConfigurer {
 		jsonView.setContentType(MediaType.APPLICATION_JSON_VALUE);
 		jsonView.setObjectMapper(objectMapper());
 		return jsonView;
+	}
+	
+	/**
+	 * 페이지 리졸버 등록
+	 */
+	@Override
+	public void addArgumentResolvers(List<HandlerMethodArgumentResolver> resolvers) {
+		resolvers.add(new MySQLPageRequestHandlerMethodArgumentResolver());
+	}
+	
+	/**
+	 * 프로퍼티 환경 관리 빈 등록
+	 * @return
+	 */
+	@Bean
+	public GlobalConfig config() {
+		return new GlobalConfig();
+	}
+	
+	/**
+	 * 브라우저에서 리소스 접근
+	 * (url로 업로드 파일 보기)
+	 */
+	@Override
+	public void addResourceHandlers(ResourceHandlerRegistry registry) {
+		String resourcePattern = config.getUploadResourcePath() + "**";
+		
+		// window 환경
+		if(config.isLocal()) {
+			registry.addResourceHandler(resourcePattern).addResourceLocations("file:///"+config.getUploadFilePath());
+			
+		// linux 또는 unix 환경
+		} else {
+			registry.addResourceHandler(resourcePattern).addResourceLocations("file:"+config.getUploadFilePath());
+		}
 	}
 	
 }
