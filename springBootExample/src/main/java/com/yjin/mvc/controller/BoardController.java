@@ -1,7 +1,9 @@
 package com.yjin.mvc.controller;
 
+import java.util.ArrayList;
 import java.util.List;
 
+import org.apache.commons.lang3.RandomStringUtils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -18,6 +20,7 @@ import com.yjin.configuration.http.BaseResponse;
 import com.yjin.configuration.http.BaseResponseCode;
 import com.yjin.mvc.domain.Board;
 import com.yjin.mvc.parameter.BoardParameter;
+import com.yjin.mvc.parameter.BoardSearchParameter;
 import com.yjin.mvc.service.BoardService;
 
 import io.swagger.annotations.Api;
@@ -44,9 +47,9 @@ public class BoardController {
 	 */
 	@GetMapping
 	@ApiOperation(value = "목록 조회", notes = "게시물 전체 목록을 조회할 수 있습니다.")
-	public BaseResponse<List<Board>> getList() {
+	public BaseResponse<List<Board>> getList(BoardSearchParameter parameter) {
 		logger.info("getList");
-		return new BaseResponse<List<Board>>(boardService.getList());
+		return new BaseResponse<List<Board>>(boardService.getList(parameter));
 	}
 	
 	/**
@@ -107,6 +110,60 @@ public class BoardController {
 			return new BaseResponse<Boolean>(false);
 		}
 		boardService.delete(boardSeq);
+		return new BaseResponse<Boolean>(true);
+	}
+	
+	/**
+	 * 10,000건 대용량 등록 테스트 (loop)
+	 * 실행 시간: 39.018
+	 * @return
+	 */
+	@ApiOperation(value = "대용량 등록 테스트(loop)", notes = "대용량 등록 테스트(loop)")
+	@PutMapping("/saveListLoop")
+	public BaseResponse<Boolean> saveList_loop() {
+		int count = 0;
+		// 랜덤으로 10000건의 데이터 생성
+		List<BoardParameter> list = new ArrayList<BoardParameter>();
+		while(true) {
+			count++;
+			String title = RandomStringUtils.randomAlphabetic(10);
+			String contents = RandomStringUtils.randomAlphabetic(10);
+			list.add(new BoardParameter(title, contents));
+			if(count >= 10000) {
+				break;
+			}
+		}
+		long start = System.currentTimeMillis();
+		boardService.saveList_loop(list);
+		long end = System.currentTimeMillis();
+		logger.info("실행 시간: {}초", (end - start) / 1000.0);
+		return new BaseResponse<Boolean>(true);
+	}
+	
+	/**
+	 * 10,000건 대용량 등록 테스트 (map)
+	 * 실행 시간: 0.701
+	 * @return
+	 */
+	@ApiOperation(value = "대용량 등록 테스트(map)", notes = "대용량 등록 테스트(map)")
+	@PutMapping("/saveListMap")
+	public BaseResponse<Boolean> saveList_map() {
+		int count = 0;
+		// 랜덤으로 10000건의 데이터 생성
+		List<BoardParameter> list = new ArrayList<BoardParameter>();
+		while(true) {
+			count++;
+			String title = RandomStringUtils.randomAlphabetic(10);
+			String contents = RandomStringUtils.randomAlphabetic(10);
+			list.add(new BoardParameter(title, contents));
+			if(count >= 10000) {
+				break;
+			}
+		}
+		long start = System.currentTimeMillis();
+		boardService.saveList_map(list);
+		long end = System.currentTimeMillis();
+		logger.info("실행 시간: {}초", (end - start) / 1000.0);
 		return new BaseResponse<Boolean>(true);
 	}
 	

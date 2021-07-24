@@ -1,12 +1,15 @@
 package com.yjin.mvc.service;
 
+import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
 import com.yjin.mvc.domain.Board;
 import com.yjin.mvc.parameter.BoardParameter;
+import com.yjin.mvc.parameter.BoardSearchParameter;
 import com.yjin.mvc.repository.BoardRepository;
 
 /**
@@ -23,8 +26,8 @@ public class BoardService {
 	 * 목록 리턴
 	 * @return
 	 */
-	public List<Board> getList() {
-		return repository.getList();
+	public List<Board> getList(BoardSearchParameter parameter) {
+		return repository.getList(parameter);
 	}
 	
 	/**
@@ -55,6 +58,26 @@ public class BoardService {
 	 */
 	public void delete(int boardSeq) {
 		repository.delete(boardSeq);
+	}
+	
+	/**
+	 * 단순 반복문 등록 처리 (개수만큼 connection 호출)
+	 * @param list
+	 */
+	public void saveList_loop(List<BoardParameter> boardList) {
+		for(BoardParameter param : boardList) {
+			repository.save(param);
+		}
+	}
+	
+	/**
+	 * Map에 담아 일괄 등록 처리 (한 번의 connection 호출)
+	 * @param boardList
+	 */
+	public void saveList_map(List<BoardParameter> boardList) {
+		Map<String, Object> paramMap = new HashMap<String, Object>();
+		paramMap.put("boardList", boardList);
+		repository.saveList(paramMap);
 	}
 	
 }

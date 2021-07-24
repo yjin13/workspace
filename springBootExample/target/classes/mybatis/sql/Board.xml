@@ -3,19 +3,36 @@
 
 <mapper namespace="com.yjin.mvc.repository.BoardRepository">
 
-	<select id="getList" parameterType="com.yjin.mvc.domain.Board" resultType="com.yjin.mvc.domain.Board">
+	<!-- @를 사용하면 Java static method 접근 가능 (@패키지+클래스명@메소드명) -->
+	<select id="getList" parameterType="com.yjin.mvc.parameter.BoardSearchParameter" resultType="com.yjin.mvc.domain.Board">
 	SELECT
 		B.BOARD_SEQ,
+		B.BOARD_TYPE,
 		B.TITLE,
 		B.CONTENTS,
 		B.REG_DATE
 	FROM T_BOARD B
+	<where>
+		<!-- 제목 키워드 검색 -->
+		<if test="@org.apache.commons.lang3.StringUtils@isNotEmpty(keyword)">
+		AND B.TITLE LIKE CONCAT('%', #{keyword}, '%')
+		</if>
+		<!-- 게시판 종류 검색 -->
+		<if test="@org.apache.commons.lang3.ObjectUtils@isNotEmpty(boardTypes)">
+		AND B.BOARD_TYPE IN (
+			<foreach collection="boardTypes" item="value" separator=",">
+			#{value}
+			</foreach>
+		)
+		</if>
+	</where>
 	ORDER BY B.REG_DATE DESC
 	</select>
 	
 	<select id="get" parameterType="int" resultType="com.yjin.mvc.domain.Board">
 	SELECT
 		B.BOARD_SEQ,
+		B.BOARD_TYPE,
 		B.TITLE,
 		B.CONTENTS,
 		B.REG_DATE
@@ -26,12 +43,14 @@
 	<insert id="save" parameterType="com.yjin.mvc.parameter.BoardParameter" useGeneratedKeys="true" keyProperty="boardSeq">
 	INSERT INTO T_BOARD
 	(
+		BOARD_TYPE,
 		TITLE,
 		CONTENTS,
 		REG_DATE
 	)
 	VALUES
 	(
+		#{boardType.code},
 		#{title},
 		#{contents},
 		NOW()
@@ -41,6 +60,7 @@
 	<update id="update" parameterType="com.yjin.mvc.domain.Board">
 	UPDATE T_BOARD
 	SET
+		BOARD_TYPE = #{boardType.code},
 		TITLE = #{title},
 		CONTENTS = #{contents}
 	WHERE BOARD_SEQ = #{boardSeq}
@@ -50,5 +70,23 @@
 	DELETE FROM T_BOARD
 	WHERE BOARD_SEQ = #{boardSeq}
 	</delete>
+	
+	<!-- 다중 insert -->
+	<insert id="saveList" parameterType="map">
+	INSERT INTO T_BOARD
+	(
+		TITLE,
+		CONTENTS,
+		REG_DATE
+	)
+	VALUES
+	<foreach collection="boardList" item="board" separator=",">
+	(
+		#{board.title},
+		#{board.contents},
+		NOW()
+	)
+	</foreach>
+	</insert>
 
 </mapper>
