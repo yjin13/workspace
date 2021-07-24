@@ -11,6 +11,7 @@ public enum BaseResponseCode {
 	DATA_IS_NULL, // NULL
 	VALIDATE_REQUIRED, // 필수 입력
 	LOGIN_REQUIRED, // 로그인 필수
+	UPLOAD_FILE_IS_NULL, // 파일 NULL
 	;
 
 }
