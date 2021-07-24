@@ -1,0 +1,68 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<configuration>
+	<property name="LOG_PATTERN" value="%d{yyyy-MM-dd HH:mm:ss} %p %c[%method:%line] - %msg%n"/>
+
+	<appender name="STDOUT" class="ch.qos.logback.core.ConsoleAppender">
+		<layout class="ch.qos.logback.classic.PatternLayout">
+			<Pattern>${LOG_PATTERN}</Pattern>
+		</layout>
+	</appender>
+
+	<logger name="com.yjin.mvc.repository">
+		<level value="DEBUG" />
+	</logger>
+
+	<logger name="org.springframework.boot">
+		<level value="WARN" />
+	</logger>
+	<logger name="org.springframework.boot.devtools.restart">
+		<level value="INFO" />
+	</logger>
+	<logger name="org.springframework">
+		<level value="INFO" />
+	</logger>
+	<logger name="springfox">
+		<level value="ERROR" />
+	</logger>
+	<logger name="org.hibernate">
+		<level value="ERROR" />
+	</logger>
+	<logger name="org.apache">
+		<level value="ERROR" />
+	</logger>
+	<logger name="org.apache.http.impl.conn">
+		<level value="ERROR" />
+	</logger>
+
+	<logger name="log4jdbc">
+		<level value="WARN" />
+	</logger>
+
+	<logger name="org.mybatis">
+		<level value="WARN" />
+	</logger>
+
+	<logger name="com.zaxxer">
+		<level value="ERROR" />
+	</logger>
+
+	<!-- Query Loggers -->
+	<!-- 
+		jdbc.sqlonly : SQL들을 보여주며 P-Statement 경우 관련된 파라매터는 자동으로 변경되어 출력됩니다.
+		jdbc.sqltiming : SQL문과 해당 SQL문의 실행 시간을 밀리초 단위로 보여줍니다.
+		jdbc.audit : ResultSets을 제외한 모든 JDBC 호출정보를 보여줍니다. (일반적으로 사용 안함)
+		jdbc.resultset : ResultSets을 포함한 모든 JDBC 호출정보를 보여줍니다. (일반적으로 더 사용 안함)
+		jdbc.resulttable : SQL의 조회 결과를 테이블로 보여줍니다.
+		jdbc.connection : Connection의 연결과 종료에 관련된 로그를 보여줍니다. 메모리 누수에 도움됨!
+	 -->
+	<logger name="jdbc.connection" level="INFO" />
+	<logger name="jdbc.sqlonly" level="DEBUG" />
+	<logger name="jdbc.sqltiming" level="ERROR" />
+	<logger name="jdbc.resultset" level="OFF" />
+	<logger name="jdbc.resultsettable" level="ERROR" />
+	<logger name="jdbc.audit" level="OFF" />
+
+	<root level="INFO">
+		<appender-ref ref="STDOUT" />
+	</root>
+</configuration> 
