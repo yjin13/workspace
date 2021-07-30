@@ -1,7 +1,5 @@
 package com.yjin.mvc.parameter;
 
-import java.util.List;
-
 import com.yjin.mvc.domain.BoardType;
 
 import lombok.Data;
@@ -14,7 +12,7 @@ import lombok.Data;
 public class BoardSearchParameter {
 	
 	private String keyword;
-	private List<BoardType> boardTypes;
+	private BoardType[] boardTypes;
 	
 	public BoardSearchParameter() {}
 }
