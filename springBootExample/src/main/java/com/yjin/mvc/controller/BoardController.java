@@ -33,7 +33,6 @@ import io.swagger.annotations.Api;
 import io.swagger.annotations.ApiImplicitParam;
 import io.swagger.annotations.ApiImplicitParams;
 import io.swagger.annotations.ApiOperation;
-import io.swagger.annotations.ApiParam;
 
 /**
  * 게시판 Controller
@@ -49,7 +48,7 @@ public class BoardController {
 	private BoardService boardService;
 	
 	/**
-	 * 등록/수정 화면  
+	 * 등록 화면  
 	 * @param parameter
 	 * @param model
 	 */
@@ -62,6 +61,24 @@ public class BoardController {
 		}
 		model.addAttribute("parameter", parameter);
 	}
+	
+	/**
+	 * 수정 화면  
+	 * @param parameter
+	 * @param model
+	 */
+	@GetMapping("/edit/{boardSeq}")
+	@RequestConfig(loginCheck = false)
+	public String edit(@PathVariable(required = true) int boardSeq, BoardParameter parameter, Model model) {
+		Board board = boardService.get(boardSeq);
+		if(board == null) {
+			throw new BaseException(BaseResponseCode.DATA_IS_NULL, new String[] {"게시물"});
+		}
+		model.addAttribute("board", board);
+		model.addAttribute("parameter", parameter);
+		
+		return "/board/form";
+	}
 
 	/**
 	 * 목록 리턴
@@ -69,16 +86,14 @@ public class BoardController {
 	 * @param pageRequest
 	 * @return
 	 */
-	@GetMapping
-	@ResponseBody
+	@GetMapping("/list")
 	@ApiOperation(value = "목록 조회", notes = "게시물 전체 목록을 조회할 수 있습니다.")
-	public BaseResponse<List<Board>> getList(
-			@ApiParam BoardSearchParameter parameter,
-			@ApiParam MySQLPageRequest pageRequest) {
+	public void list(BoardSearchParameter parameter, MySQLPageRequest pageRequest, Model model) {
 		logger.info("pageRequest: {}", pageRequest);
-		
 		PageRequestParameter<BoardSearchParameter> pageRequestParameter = new PageRequestParameter<BoardSearchParameter>(pageRequest, parameter);
-		return new BaseResponse<List<Board>>(boardService.getList(pageRequestParameter));
+		
+		List<Board> boardList = boardService.getList(pageRequestParameter);
+		model.addAttribute("boardList", boardList);
 	}
 	
 	/**
@@ -87,17 +102,17 @@ public class BoardController {
 	 * @return
 	 */
 	@GetMapping("/{boardSeq}")
-	@ResponseBody
 	@ApiOperation(value = "상세 조회", notes = "게시물 번호에 해당하는 상세 정보를 조회할 수 있습니다.")
 	@ApiImplicitParams({
 		@ApiImplicitParam(name = "boardSeq", value = "게시물 번호", example = "1")
 	})
-	public BaseResponse<Board> get(@PathVariable int boardSeq) {
+	public String detail(@PathVariable int boardSeq, Model model) {
 		Board board = boardService.get(boardSeq);
 		if(board == null) {
 			throw new BaseException(BaseResponseCode.DATA_IS_NULL, new String[] {"게시물"});
 		}
-		return new BaseResponse<Board>(boardService.get(boardSeq));
+		model.addAttribute("board", board);
+		return "/board/detail";
 	}
 	
 	/**
