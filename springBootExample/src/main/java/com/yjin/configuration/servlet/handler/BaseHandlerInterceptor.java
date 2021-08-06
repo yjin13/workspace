@@ -12,6 +12,7 @@ import org.springframework.web.servlet.ModelAndView;
 import com.yjin.configuration.exception.BaseException;
 import com.yjin.configuration.http.BaseResponseCode;
 import com.yjin.framework.web.bind.annotation.RequestConfig;
+import com.yjin.mvc.domain.MenuType;
 
 /**
  * 인터셉터 클래스 (컨트롤러 전 후 작업)
@@ -40,6 +41,7 @@ public class BaseHandlerInterceptor implements HandlerInterceptor {
 				}
 			}
 		}
+		
 		return true;
 	}
 
@@ -49,6 +51,12 @@ public class BaseHandlerInterceptor implements HandlerInterceptor {
 	@Override
 	public void postHandle(HttpServletRequest request, HttpServletResponse response, Object handler, ModelAndView modelAndView) throws Exception {
 		logger.info("postHandle requestURI : {}", request.getRequestURI());
+		
+		if(handler instanceof HandlerMethod) { 
+			if(modelAndView != null) {
+				modelAndView.addObject("menuTypes", MenuType.values());
+			}
+		}
 	}
 
 }

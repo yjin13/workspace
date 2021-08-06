@@ -45,6 +45,46 @@ public class BoardController {
 	
 	@Autowired
 	private BoardService boardService;
+
+	/**
+	 * 목록 리턴
+	 * @param parameter
+	 * @param pageRequest
+	 * @return
+	 */
+	@GetMapping("/{menuType}")
+	@ApiOperation(value = "목록 조회", notes = "게시물 전체 목록을 조회할 수 있습니다.")
+	public String list(@PathVariable MenuType menuType, BoardSearchParameter parameter, MySQLPageRequest pageRequest, Model model) {
+		logger.info("pageRequest: {}", pageRequest);
+		parameter.setBoardType(menuType.getBoardType());
+		PageRequestParameter<BoardSearchParameter> pageRequestParameter = new PageRequestParameter<BoardSearchParameter>(pageRequest, parameter);
+		
+		List<Board> boardList = boardService.getList(pageRequestParameter);
+		model.addAttribute("boardList", boardList);
+		model.addAttribute("menuType", menuType);
+		
+		return "/board/list";
+	}
+	
+	/**
+	 * 상세 정보 리턴
+	 * @param boardSeq
+	 * @return
+	 */
+	@GetMapping("/{menuType}/{boardSeq}")
+	@ApiOperation(value = "상세 조회", notes = "게시물 번호에 해당하는 상세 정보를 조회할 수 있습니다.")
+	@ApiImplicitParams({
+		@ApiImplicitParam(name = "boardSeq", value = "게시물 번호", example = "1")
+	})
+	public String detail(@PathVariable MenuType menuType, @PathVariable int boardSeq, Model model) {
+		Board board = boardService.get(boardSeq);
+		if(board == null) {
+			throw new BaseException(BaseResponseCode.DATA_IS_NULL, new String[] {"게시물"});
+		}
+		model.addAttribute("board", board);
+		model.addAttribute("menuType", menuType);
+		return "/board/detail";
+	}
 	
 	/**
 	 * 등록 화면  
@@ -81,45 +121,6 @@ public class BoardController {
 		
 		return "/board/form";
 	}
-
-	/**
-	 * 목록 리턴
-	 * @param parameter
-	 * @param pageRequest
-	 * @return
-	 */
-	@GetMapping("/{menuType}")
-	@ApiOperation(value = "목록 조회", notes = "게시물 전체 목록을 조회할 수 있습니다.")
-	public String list(@PathVariable MenuType menuType, BoardSearchParameter parameter, MySQLPageRequest pageRequest, Model model) {
-		logger.info("pageRequest: {}", pageRequest);
-		PageRequestParameter<BoardSearchParameter> pageRequestParameter = new PageRequestParameter<BoardSearchParameter>(pageRequest, parameter);
-		
-		List<Board> boardList = boardService.getList(pageRequestParameter);
-		model.addAttribute("boardList", boardList);
-		model.addAttribute("menuType", menuType);
-		
-		return "/board/list";
-	}
-	
-	/**
-	 * 상세 정보 리턴
-	 * @param boardSeq
-	 * @return
-	 */
-	@GetMapping("/{menuType}/{boardSeq}")
-	@ApiOperation(value = "상세 조회", notes = "게시물 번호에 해당하는 상세 정보를 조회할 수 있습니다.")
-	@ApiImplicitParams({
-		@ApiImplicitParam(name = "boardSeq", value = "게시물 번호", example = "1")
-	})
-	public String detail(@PathVariable MenuType menuType, @PathVariable int boardSeq, Model model) {
-		Board board = boardService.get(boardSeq);
-		if(board == null) {
-			throw new BaseException(BaseResponseCode.DATA_IS_NULL, new String[] {"게시물"});
-		}
-		model.addAttribute("board", board);
-		model.addAttribute("menuType", menuType);
-		return "/board/detail";
-	}
 	
 	/**
 	 * 등록/수정 처리
@@ -144,6 +145,7 @@ public class BoardController {
 		if(!StringUtils.hasText(boardParameter.getContents())) {
 			throw new BaseException(BaseResponseCode.VALIDATE_REQUIRED, new String[] {"contents", "내용"});
 		}
+		boardParameter.setBoardType(menuType.getBoardType());
 		boardService.save(boardParameter);
 		return new BaseResponse<Integer>(boardParameter.getBoardSeq());
 	}

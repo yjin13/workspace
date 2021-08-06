@@ -5,12 +5,6 @@
 <%@ taglib prefix="spring" uri="http://www.springframework.org/tags" %>
 <!DOCTYPE html>
 <html>
-<head>
-	<meta charset="UTF-8">
-	<title>Example</title>
-	<link href="https://cdn.jsdelivr.net/npm/bootstrap@5.0.2/dist/css/bootstrap.min.css" rel="stylesheet"
-		integrity="sha384-EVSTQN3/azprG1Anm3QDgpJLIm9Nao0Yz1ztcQTwFspd3yD65VohhpuuCOmLASjC" crossorigin="anonymous">
-</head>
 <body>
 	<div class="container">
 		<h3>총 개수: ${totalCount}</h3>
@@ -54,7 +48,6 @@
 		</div>
 	</div>
 	
-	<script src="https://code.jquery.com/jquery-1.11.3.js"></script>
 	<script>
 	/* $(function() {
 		var $form = $('#form');
