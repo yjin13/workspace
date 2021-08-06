@@ -15,7 +15,6 @@ import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.PutMapping;
-import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.ResponseBody;
 
 import com.yjin.configuration.exception.BaseException;
@@ -25,6 +24,7 @@ import com.yjin.framework.data.domain.MySQLPageRequest;
 import com.yjin.framework.data.domain.PageRequestParameter;
 import com.yjin.framework.web.bind.annotation.RequestConfig;
 import com.yjin.mvc.domain.Board;
+import com.yjin.mvc.domain.MenuType;
 import com.yjin.mvc.parameter.BoardParameter;
 import com.yjin.mvc.parameter.BoardSearchParameter;
 import com.yjin.mvc.service.BoardService;
@@ -39,7 +39,6 @@ import io.swagger.annotations.ApiOperation;
  * @author yjin
  */
 @Controller
-@RequestMapping("/board")
 @Api(tags = "게시판 API")
 public class BoardController {
 	Logger logger = LoggerFactory.getLogger(getClass());
@@ -86,14 +85,16 @@ public class BoardController {
 	 * @param pageRequest
 	 * @return
 	 */
-	@GetMapping("/list")
+	@GetMapping("/{menuType}")
 	@ApiOperation(value = "목록 조회", notes = "게시물 전체 목록을 조회할 수 있습니다.")
-	public void list(BoardSearchParameter parameter, MySQLPageRequest pageRequest, Model model) {
+	public String list(@PathVariable MenuType menuType, BoardSearchParameter parameter, MySQLPageRequest pageRequest, Model model) {
 		logger.info("pageRequest: {}", pageRequest);
 		PageRequestParameter<BoardSearchParameter> pageRequestParameter = new PageRequestParameter<BoardSearchParameter>(pageRequest, parameter);
 		
 		List<Board> boardList = boardService.getList(pageRequestParameter);
 		model.addAttribute("boardList", boardList);
+		
+		return "/board/list";
 	}
 	
 	/**
@@ -101,7 +102,7 @@ public class BoardController {
 	 * @param boardSeq
 	 * @return
 	 */
-	@GetMapping("/{boardSeq}")
+	@GetMapping("/detail/{boardSeq}")
 	@ApiOperation(value = "상세 조회", notes = "게시물 번호에 해당하는 상세 정보를 조회할 수 있습니다.")
 	@ApiImplicitParams({
 		@ApiImplicitParam(name = "boardSeq", value = "게시물 번호", example = "1")
