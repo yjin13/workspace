@@ -4,6 +4,7 @@ import java.util.List;
 import java.util.Locale;
 
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.boot.web.servlet.FilterRegistrationBean;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.context.support.ReloadableResourceBundleMessageSource;
@@ -115,6 +116,17 @@ public class WebConfiguration implements WebMvcConfigurer {
 		} else {
 			registry.addResourceHandler(resourcePattern).addResourceLocations("file:"+config.getUploadFilePath());
 		}
+	}
+	
+	/**
+	 * sitemesh 빈 등록
+	 * @return
+	 */
+	@Bean
+	public FilterRegistrationBean<SitemeshConfiguration> sitemeshBean() {
+		FilterRegistrationBean<SitemeshConfiguration> bean = new FilterRegistrationBean<SitemeshConfiguration>();
+		bean.setFilter(new SitemeshConfiguration());
+		return bean;
 	}
 	
 }

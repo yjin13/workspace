@@ -11,7 +11,7 @@
 </head>
 <body>
 	<div class="container">
-		<form id="form" method="post" action="/save">
+		<form id="form" method="post">
 			<input type="hidden" name="boardSeq" value="${board == null ? 0 : board.boardSeq}"/>
 			<input type="hidden" name="boardType" value="COMMUNITY"/>
 			<div class="row mb-3">
@@ -36,15 +36,16 @@
 		var $form = $('#form');
 		$form.bind('submit', function() {
 			$.ajax({
-				url: '/board/save',
+				url: '/${menuType}/save',
 				type: 'post',
 				data: $form.serialize(),
 				dataType: 'json',
-				success: function(data) {
-					if(data.code == 'SUCCESS') {
-						console.log(data);
+				success: function(response) {
+					if(response.code == 'SUCCESS') {
+						alert("저장되었습니다.");
+						location.href = '/${menuType}/' + response.data;
 					} else {
-						alert(data.message);
+						alert(response.message);
 					}
 				}
 			});

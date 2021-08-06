@@ -51,14 +51,17 @@ public class BoardController {
 	 * @param parameter
 	 * @param model
 	 */
-	@GetMapping("/form")
+	@GetMapping("/{menuType}/form")
 	@RequestConfig(loginCheck = false)
-	public void form(BoardParameter parameter, Model model) {
+	public String form(@PathVariable MenuType menuType, BoardParameter parameter, Model model) {
 		if(parameter.getBoardSeq() > 0) {
 			Board board = boardService.get(parameter.getBoardSeq());
 			model.addAttribute("board", board);
 		}
 		model.addAttribute("parameter", parameter);
+		model.addAttribute("menuType", menuType);
+		
+		return "/board/form";
 	}
 	
 	/**
@@ -66,9 +69,9 @@ public class BoardController {
 	 * @param parameter
 	 * @param model
 	 */
-	@GetMapping("/edit/{boardSeq}")
+	@GetMapping("/{menuType}/edit/{boardSeq}")
 	@RequestConfig(loginCheck = false)
-	public String edit(@PathVariable(required = true) int boardSeq, BoardParameter parameter, Model model) {
+	public String edit(@PathVariable MenuType menuType, @PathVariable(required = true) int boardSeq, BoardParameter parameter, Model model) {
 		Board board = boardService.get(boardSeq);
 		if(board == null) {
 			throw new BaseException(BaseResponseCode.DATA_IS_NULL, new String[] {"게시물"});
@@ -93,6 +96,7 @@ public class BoardController {
 		
 		List<Board> boardList = boardService.getList(pageRequestParameter);
 		model.addAttribute("boardList", boardList);
+		model.addAttribute("menuType", menuType);
 		
 		return "/board/list";
 	}
@@ -102,17 +106,18 @@ public class BoardController {
 	 * @param boardSeq
 	 * @return
 	 */
-	@GetMapping("/detail/{boardSeq}")
+	@GetMapping("/{menuType}/{boardSeq}")
 	@ApiOperation(value = "상세 조회", notes = "게시물 번호에 해당하는 상세 정보를 조회할 수 있습니다.")
 	@ApiImplicitParams({
 		@ApiImplicitParam(name = "boardSeq", value = "게시물 번호", example = "1")
 	})
-	public String detail(@PathVariable int boardSeq, Model model) {
+	public String detail(@PathVariable MenuType menuType, @PathVariable int boardSeq, Model model) {
 		Board board = boardService.get(boardSeq);
 		if(board == null) {
 			throw new BaseException(BaseResponseCode.DATA_IS_NULL, new String[] {"게시물"});
 		}
 		model.addAttribute("board", board);
+		model.addAttribute("menuType", menuType);
 		return "/board/detail";
 	}
 	
@@ -120,7 +125,7 @@ public class BoardController {
 	 * 등록/수정 처리
 	 * @param board
 	 */
-	@PostMapping("/save")
+	@PostMapping("/{menuType}/save")
 	@ResponseBody
 	@RequestConfig(loginCheck = false)
 	@ApiOperation(value = "등록/수정 처리", notes = "신규 게시물 저장 및 기존 게시물 업데이트가 가능합니다.")
@@ -129,7 +134,7 @@ public class BoardController {
 		@ApiImplicitParam(name = "title", value = "제목", example = "제목 없음"),
 		@ApiImplicitParam(name = "contents", value = "내용", example = "내용을 입력하세요.")
 	})
-	public BaseResponse<Integer> save(BoardParameter boardParameter) {
+	public BaseResponse<Integer> save(@PathVariable MenuType menuType, BoardParameter boardParameter) {
 		// 제목 필수 체크
 		if(!StringUtils.hasText(boardParameter.getTitle())) {
 			throw new BaseException(BaseResponseCode.VALIDATE_REQUIRED, new String[] {"title", "제목"});
@@ -147,14 +152,14 @@ public class BoardController {
 	 * 삭제 처리
 	 * @param boardSeq
 	 */
-	@DeleteMapping("/{boardSeq}")
+	@DeleteMapping("/{menuType}/{boardSeq}")
 	@ResponseBody
 	@RequestConfig(loginCheck = true)
 	@ApiOperation(value = "삭제 처리", notes = "게시물 번호에 해당하는 정보를 삭제합니다.")
 	@ApiImplicitParams({
 		@ApiImplicitParam(name = "boardSeq", value = "게시물 번호", example = "1"),
 	})
-	public BaseResponse<Boolean> delete(@PathVariable int boardSeq) {
+	public BaseResponse<Boolean> delete(@PathVariable MenuType menuType, @PathVariable int boardSeq) {
 		Board board = boardService.get(boardSeq);
 		if(board == null) {
 			return new BaseResponse<Boolean>(false);
