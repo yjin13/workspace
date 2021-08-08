@@ -33,6 +33,7 @@ import io.swagger.annotations.Api;
 import io.swagger.annotations.ApiImplicitParam;
 import io.swagger.annotations.ApiImplicitParams;
 import io.swagger.annotations.ApiOperation;
+import io.swagger.annotations.ApiParam;
 
 /**
  * 게시판 Controller
@@ -64,6 +65,23 @@ public class BoardController {
 		model.addAttribute("menuType", menuType);
 		
 		return "/board/list";
+	}
+	
+	/**
+	 * 목록 리턴 (json)
+	 * @param parameter
+	 * @param pageRequest
+	 * @return
+	 */
+	@GetMapping("/board/{menuType}")
+	@ResponseBody
+	@ApiOperation(value = "목록 조회", notes = "게시물 전체 목록을 조회할 수 있습니다.")
+	public BaseResponse<List<Board>> getList(@PathVariable MenuType menuType, @ApiParam BoardSearchParameter parameter, @ApiParam MySQLPageRequest pageRequest) {
+		logger.info("pageRequest: {}", pageRequest);
+
+		parameter.setBoardType(menuType.getBoardType());
+		PageRequestParameter<BoardSearchParameter> pageRequestParameter = new PageRequestParameter<BoardSearchParameter>(pageRequest, parameter);
+		return new BaseResponse<List<Board>>(boardService.getList(pageRequestParameter));
 	}
 	
 	/**
