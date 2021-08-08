@@ -10,6 +10,7 @@ import org.springframework.context.annotation.Configuration;
 import org.springframework.context.support.ReloadableResourceBundleMessageSource;
 import org.springframework.http.MediaType;
 import org.springframework.web.method.support.HandlerMethodArgumentResolver;
+import org.springframework.web.servlet.config.annotation.CorsRegistry;
 import org.springframework.web.servlet.config.annotation.InterceptorRegistry;
 import org.springframework.web.servlet.config.annotation.ResourceHandlerRegistry;
 import org.springframework.web.servlet.config.annotation.WebMvcConfigurer;
@@ -127,6 +128,14 @@ public class WebConfiguration implements WebMvcConfigurer {
 		FilterRegistrationBean<SitemeshConfiguration> bean = new FilterRegistrationBean<SitemeshConfiguration>();
 		bean.setFilter(new SitemeshConfiguration());
 		return bean;
+	}
+	
+	/**
+	 * vue(port 8080)에서 접근할 수 있도록 설정
+	 */
+	@Override
+	public void addCorsMappings(CorsRegistry registry) {
+		registry.addMapping("/**").allowedOrigins("http://localhost:8081");
 	}
 	
 }
