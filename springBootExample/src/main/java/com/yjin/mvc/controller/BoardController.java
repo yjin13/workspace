@@ -15,7 +15,9 @@ import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.PutMapping;
+import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.ResponseBody;
+import org.springframework.web.multipart.MultipartFile;
 
 import com.yjin.configuration.exception.BaseException;
 import com.yjin.configuration.http.BaseResponse;
@@ -46,6 +48,9 @@ public class BoardController {
 	
 	@Autowired
 	private BoardService boardService;
+	
+	@Autowired
+	private FileController fileController;
 
 	/**
 	 * 목록 리턴
@@ -165,6 +170,30 @@ public class BoardController {
 		}
 		boardParameter.setBoardType(menuType.getBoardType());
 		boardService.save(boardParameter);
+		return new BaseResponse<Integer>(boardParameter.getBoardSeq());
+	}
+	
+	/**
+	 * vue에서 파일 업로드
+	 * @param board
+	 */
+	@PostMapping("/save")
+	@ResponseBody
+	public BaseResponse<Integer> saveVue(BoardParameter boardParameter, @RequestParam(required = false) MultipartFile uploadFile) {
+		logger.info("uploadFile: {}", uploadFile);
+		
+		// 제목 필수 체크
+		if(!StringUtils.hasText(boardParameter.getTitle())) {
+			throw new BaseException(BaseResponseCode.VALIDATE_REQUIRED, new String[] {"title", "제목"});
+		}
+		
+		// 내용 필수 체크
+		if(!StringUtils.hasText(boardParameter.getContents())) {
+			throw new BaseException(BaseResponseCode.VALIDATE_REQUIRED, new String[] {"contents", "내용"});
+		}
+		
+		boardService.save(boardParameter);
+		fileController.save(uploadFile);
 		return new BaseResponse<Integer>(boardParameter.getBoardSeq());
 	}
 	

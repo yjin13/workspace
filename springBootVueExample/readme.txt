@@ -24,3 +24,5 @@ router 설치
 
 main.js에 import 하기
 >> import VueRouter from 'vue-router'
+
+vue 파일 만들기
