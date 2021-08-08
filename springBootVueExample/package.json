@@ -1,5 +1,6 @@
 {
   "dependencies": {
+    "vue-router": "^3.5.2",
     "vuejs": "^3.0.1"
   }
 }
