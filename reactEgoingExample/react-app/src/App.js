@@ -14,6 +14,7 @@ class App extends Component {
     super(props);
     this.state = { // state 값 초기화
       mode: "read",
+      selected_content_id: 2,
       subject: {
         title: "WEB", sub: "world wide web!"
       },
@@ -36,25 +37,52 @@ class App extends Component {
       _title = this.state.welcome.title;
       _desc = this.state.welcome.desc;
     } else if (this.state.mode === "read") {
-      _title = this.state.contents[0].title;
-      _desc = this.state.contents[0].desc;
+      var i = 0;
+      while (i < this.state.contents.length) {
+        var data = this.state.contents[i];
+        if (data.id === this.state.selected_content_id) {
+          _title = data.title;
+          _desc = data.desc;
+          break;
+        }
+        i++;
+      }
     }
     
     return (
       <div className="App">
+        {/*
         <header>
           <h1>
             <a href="/" onClick={function(e) { // this를 못찾으면 bind 설정
               e.preventDefault(); // reload 막기
-              this.setState({ // state 값 변경
+              this.setState({ // state 값 변경 (this.state.mode = "" 로 바꿀 수 없음: 리액트가 인지하지 못함)
                 mode: "welcome"
               });
             }.bind(this)}>{this.state.subject.title}</a>
           </h1>
           {this.state.subject.sub}
         </header>
-        <Subject title={this.state.subject.title} sub={this.state.subject.sub}></Subject>
-        <Toc data={this.state.contents}></Toc>
+        */}
+
+        <Subject 
+          title={this.state.subject.title} 
+          sub={this.state.subject.sub}
+          onChangePage={function() {
+            this.setState({mode: "welcome"});
+          }.bind(this)}
+        >
+        </Subject>
+        <Toc 
+          data={this.state.contents}
+          onChangePage={function(id) {
+            this.setState({
+              mode: "read",
+              selected_content_id: Number(id)
+            });
+          }.bind(this)}
+        >
+        </Toc>
         <Content title={_title} desc={_desc}></Content>
       </div>
     );
