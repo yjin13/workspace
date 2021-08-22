@@ -5,12 +5,12 @@ index.html 존재
 대부분 작성하는 파일
 
 ## 명령어
-npm run start: 서버 구동
-npm run build: 빌드
--> build 디렉터리 생성 (실제 서비스시 빌드 안의 파일 사용: 용량 줄임)
-npm install -g serve: 어디서나 실행 가능
-npx serve: 한 번만 실행
-npx serve -s build: build 디렉터리를 document root로 설정 (최적화: 1.7MB -> 52B)
+npm run start: 서버 구동\
+npm run build: 빌드\
+-> build 디렉터리 생성 (실제 서비스시 빌드 안의 파일 사용: 용량 줄임)\
+npm install -g serve: 어디서나 실행 가능\
+npx serve: 한 번만 실행\
+npx serve -s build: build 디렉터리를 document root로 설정 (최적화: 1.7MB -> 52B)\
 
 
 # Getting Started with Create React App

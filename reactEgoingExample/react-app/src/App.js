@@ -1,51 +1,61 @@
 import React, { Component } from 'react';
+import Toc from "./components/Toc";
+import Content from "./components/Content";
+import Subject from "./components/Subject";
 import './App.css';
 
-class Subject extends Component {
-  render() {
-    return (
-      <header>
-        <h1>{this.props.title}</h1>
-        {this.props.sub}
-      </header>
-    );
-  }
-}
-
-class Toc extends Component {
-  render() {
-    return (
-      <nav>
-        <ul>
-          <li><a href="#">HTML</a></li>
-          <li><a href="#">CSS</a></li>
-          <li><a href="#">JavaScript</a></li>
-        </ul>
-      </nav>
-    );
-  }
-}
-
-class Content extends Component {
-  render() {
-    return (
-      <article>
-        <h2>{this.props.title}</h2>
-        {this.props.desc}
-      </article>
-    );
-  }
-}
 
 // class 방식
 class App extends Component {
+  
+  // conponent 초기화 (render() 전, 제일 먼저 실행)
+  // props나 state 값이 바뀌면 render()가 재실행(화면 다시 그림)
+  constructor(props) {
+    super(props);
+    this.state = { // state 값 초기화
+      mode: "read",
+      subject: {
+        title: "WEB", sub: "world wide web!"
+      },
+      welcome: {
+        title: "Welcome", desc: "Hello, React!"
+      },
+      contents: [
+        {id: 1, title: "HTML", desc: "HTML is for information."},
+        {id: 2, title: "CSS", desc: "CSS is for design."},
+        {id: 3, title: "JavaScript", desc: "JavaScript is for interactive."}
+      ]
+    };
+  }
+
+  // html 결정
+  // onClick 등 이벤트 함수가 실행되면 reload됨 -> e.preventDefault()로 막기
   render() {
+    var _title, _desc = null;
+    if (this.state.mode === "welcome") {
+      _title = this.state.welcome.title;
+      _desc = this.state.welcome.desc;
+    } else if (this.state.mode === "read") {
+      _title = this.state.contents[0].title;
+      _desc = this.state.contents[0].desc;
+    }
+    
     return (
       <div className="App">
-        <Subject title="WEB" sub="world wide web!"></Subject>
-        <Subject title="React" sub="For UI"></Subject>
-        <Toc></Toc>
-        <Content title="HTML" desc="HTML is HyperText Markup Language."></Content>
+        <header>
+          <h1>
+            <a href="/" onClick={function(e) { // this를 못찾으면 bind 설정
+              e.preventDefault(); // reload 막기
+              this.setState({ // state 값 변경
+                mode: "welcome"
+              });
+            }.bind(this)}>{this.state.subject.title}</a>
+          </h1>
+          {this.state.subject.sub}
+        </header>
+        <Subject title={this.state.subject.title} sub={this.state.subject.sub}></Subject>
+        <Toc data={this.state.contents}></Toc>
+        <Content title={_title} desc={_desc}></Content>
       </div>
     );
   }
