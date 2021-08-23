@@ -1,7 +1,9 @@
 import React, { Component } from 'react';
 import Toc from "./components/Toc";
-import Content from "./components/Content";
+import ReadContent from "./components/ReadContent";
+import CreateContent from "./components/CreateContent";
 import Subject from "./components/Subject";
+import Control from "./components/Control";
 import './App.css';
 
 
@@ -12,6 +14,7 @@ class App extends Component {
   // props나 state 값이 바뀌면 render()가 재실행(화면 다시 그림)
   constructor(props) {
     super(props);
+    this.max_content_id = 3;
     this.state = { // state 값 초기화
       mode: "read",
       selected_content_id: 2,
@@ -32,10 +35,13 @@ class App extends Component {
   // html 결정
   // onClick 등 이벤트 함수가 실행되면 reload됨 -> e.preventDefault()로 막기
   render() {
-    var _title, _desc = null;
+
+    // content 영역 교체
+    var _title, _desc, _article = null;
     if (this.state.mode === "welcome") {
       _title = this.state.welcome.title;
       _desc = this.state.welcome.desc;
+      _article = <ReadContent title={_title} desc={_desc}></ReadContent>;
     } else if (this.state.mode === "read") {
       var i = 0;
       while (i < this.state.contents.length) {
@@ -47,6 +53,17 @@ class App extends Component {
         }
         i++;
       }
+      _article = <ReadContent title={_title} desc={_desc}></ReadContent>;
+    } else if (this.state.mode === "create") {
+      _article = <CreateContent 
+        onSubmit={function(_title, _desc) {
+          this.max_content_id++;
+          // this.state.contents.push({id: this.max_content_id, title: _title, desc: _desc}); // 원본 값 변경 (성능 개선에 좋지 않음)
+          var _contents = this.state.contents.concat({id: this.max_content_id, title: _title, desc: _desc}); // 새로운 값으로 대체 (유지보수에 좋음)
+          this.setState({
+            contents: _contents
+          });
+        }.bind(this)}></CreateContent>;
     }
     
     return (
@@ -83,7 +100,15 @@ class App extends Component {
           }.bind(this)}
         >
         </Toc>
-        <Content title={_title} desc={_desc}></Content>
+        <Control 
+          onChangeMode={function(_mode) {
+            this.setState({
+              mode: _mode
+            });
+          }.bind(this)}
+        >
+        </Control>
+        {_article}
       </div>
     );
   }
