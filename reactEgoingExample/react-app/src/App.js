@@ -51,9 +51,11 @@ class App extends Component {
       _title = this.state.welcome.title;
       _desc = this.state.welcome.desc;
       _article = <ReadContent title={_title} desc={_desc}></ReadContent>;
+
     } else if (this.state.mode === "read") {
       var _content = this.getReadContent();
       _article = <ReadContent title={_content.title} desc={_content.desc}></ReadContent>;
+
     } else if (this.state.mode === "create") {
       _article = <CreateContent 
         onSubmit={function(_title, _desc) {
@@ -64,14 +66,23 @@ class App extends Component {
             contents: _contents
           });
         }.bind(this)}></CreateContent>;
+
     } else if (this.state.mode === "update") {
       _content = this.getReadContent();
       _article = <UpdateContent data={_content}
-        onSubmit={function(_title, _desc) {
-          this.max_content_id++;
-          var _contents = this.state.contents.concat({id: this.max_content_id, title: _title, desc: _desc});
+        onSubmit={function(_id, _title, _desc) {
+          var _contents = Array.from(this.state.contents); // 복사
+          var i = 0;
+          while (i < _contents.length) {
+            if(_contents[i].id === _id) {
+              _contents[i] = {id: _id, title: _title, desc: _desc};
+              break;
+            }
+            i++;
+          }
           this.setState({
-            contents: _contents
+            contents: _contents,
+            mode: 'read'
           });
         }.bind(this)}></UpdateContent>;
     }
@@ -108,7 +119,7 @@ class App extends Component {
           }.bind(this)}
         >
         </Control>
-        {this.getContent}
+        {this.getContent()}
       </div>
     );
   }
